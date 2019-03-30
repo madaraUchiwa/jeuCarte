@@ -1,0 +1,173 @@
+<html>
+
+<head>
+    <title>Cartes</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<style>
+    #C0{
+        
+        top:160;
+        left:100;
+        width:20px;
+        border:0px ;
+        background-color:#889977;
+        visibility:visible;
+        position:absolute
+    }
+    #C1{
+        top:160;
+        left:200;
+        width:20px;
+        border:0px ;
+        background-color:#889977;
+        visibility:visible;
+        position:absolute;
+    }
+
+    #C2{
+        top:160;
+        left:300;
+        width:20px;
+        border:0px ;
+        background-color:#889977;
+        visibility:visible;
+        position:absolute;
+
+    }
+    #C3{
+        top:160;
+        left:400;
+        width:20px;
+        border:0px ;
+        background-color:#889977;
+        visibility:visible;
+        position:absolute;
+
+    }
+    #dos 
+    {
+        width:20px;
+        border:5px solid red;
+        background-color:#789ABC;
+        visibility:hidden;
+        position:absolute;
+        line-height:20px;
+
+    }
+</style>
+
+<body bgcolor="#889977">
+    <Table border=5>
+        <div id="C0">
+            <P ALIGN=center><img src="pique.gif" border=0 name=pique onClick="javascript:quiestce(this)"></P>
+        </div>
+        <div id="C1"
+            style="">
+            <P ALIGN=center><IMG SRC="coeur.gif" BORDER=0 name=coeur onClick="javascript:quiestce(this)"></P>
+        </div>
+        <div id="C2"
+            style="">
+            <P ALIGN=center><IMG SRC="trefle.gif" BORDER=0 name=trefle onClick="javascript:quiestce(this)"></P>
+        </div>
+        <div id="C3"
+            style="">
+            <P ALIGN=center><IMG SRC="carreau.gif" BORDER=0 name=carreau onClick="javascript:quiestce(this)"></P>
+        </div>
+        <div id="dos"
+            style="">
+            <P ALIGN=center><IMG SRC="dos.gif" BORDER=0 name=dos></P>
+        </div>
+        <TR>
+            <TD>
+                <TABLE width=600 height=400>
+                    <TR>
+                        <TD valign="top" align="center" height="40">&nbsp;</TD>
+                    </TR>
+                    <TR>
+                        <TD valign="top" align="center">
+                            <form name="F1" action="#" method="get">
+                                <input name="boutjeu" type="button" value="Jouer" onClick="bout_jeu()">
+                            </form>
+                        </TD>
+                    </TR>
+                </TABLE>
+            </TD>
+        </TR>
+    </TABLE>
+    <script>
+        self.resizeTo(650, 600)
+
+        //======================================================================================
+        var deplenc = 0; xo = 0; xd = 0; ka = -1; kb = 0; Catr = 0; Dpl = 2
+        var mouvc = 0; nbmouv = 0; nbmouvmax = 0;
+        var Cpos = new Array(); Cpos[0] = 100; Cpos[1] = 200; Cpos[2] = 300; Cpos[3] = 400;
+        var Cte = new Array(); Cte[0] = 'pique'; Cte[1] = 'coeur'; Cte[2] = 'trefle'; Cte[3] = 'carreau';
+        var depa = 0; depb = 0;
+        var valdest = 0;
+
+        function lance_jeu() {
+            if (deplenc == 0) {
+                deplenc = 1; nbmouv = 0; nbmouvmax = Math.round(6 * Math.random()) + 5;
+                document.F1.boutjeu.value = "Suivez les cartes"
+                document.pique.src = 'dos.gif';
+                document.coeur.src = 'dos.gif';
+                document.trefle.src = 'dos.gif';
+                document.carreau.src = 'dos.gif';
+                depl1();
+            }
+        }
+
+        function bout_jeu() {
+            if (deplenc == 0) { lance_jeu() }
+            else {
+                if (deplenc == 1) { alert("Ne pas interrompre le déplacement") }
+                else { if (deplenc == 2) { alert("Trouvez le " + Cte[Catr]) } }
+            }
+        }
+
+        function depl1() {
+            xo = Math.round(2 * Math.random());
+            if (xo == 0) { xd = Math.round(2 * Math.random()) + 1; }
+            if (xo == 1) { xd = Math.round(1 * Math.random()) + 1; }
+            if (xo == 2) { xd = 3; }
+            if ((xo == ka) && (xd == kb)) { depl1() }
+            else {
+                valdest = Cpos[xd];
+                if (Cpos[xo] >= Cpos[xd]) { depa = -Dpl; depb = Dpl; } else { depa = Dpl; depb = -Dpl; }
+                dep(xo, xd)
+            }
+        }
+
+        function dep(a, b) {
+            ka = a; kb = b;
+            ea = document.getElementById("C" + a); Cpos[a] += depa; ea.style.left = Cpos[a];
+            eb = document.getElementById("C" + b); Cpos[b] += depb; eb.style.left = Cpos[b];
+            if (Cpos[a] == valdest) {
+                mouvc = 0; nbmouv += 1;
+                if (nbmouv < nbmouvmax) { depl1() }
+                else {
+                    Catr = Math.round(3 * Math.random())
+                    document.F1.boutjeu.value = "Trouvez le " + Cte[Catr];
+                    deplenc = 2;
+                }
+            }
+            else { comptH = setTimeout('dep(ka,kb)', 15); }
+        }
+
+        function quiestce(X) {
+            if (deplenc == 2) {
+                if (X.name == Cte[Catr]) { alert("Gagné"); }
+                else { alert("Perdu"); }
+                document.pique.src = 'pique.gif';
+                document.coeur.src = 'coeur.gif';
+                document.trefle.src = 'trefle.gif';
+                document.carreau.src = 'carreau.gif'
+                deplenc = 0;
+                document.F1.boutjeu.value = "Re-Jouer";
+            }
+            else { alert("Ne pas interrompre le déplacement"); return false }
+        }
+    </script>
+</body>
+</html>
